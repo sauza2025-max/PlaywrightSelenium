@@ -10,7 +10,7 @@ import utils.SeleniumBaseTest;
 
 import java.time.Duration;
 import java.util.List;
-
+import io.qameta.allure.*;
 /**
  * SeleniumExampleTests
  * ====================
@@ -25,6 +25,8 @@ import java.util.List;
  *  5. Handling multiple elements (lists)
  *  6. Verifying element visibility
  */
+@Epic("Selenium")
+@Feature("Valid Login")
 public class SeleniumExampleTests extends SeleniumBaseTest {
 
     // -- Test 1: Basic Navigation ---------------------------------------------
@@ -33,6 +35,7 @@ public class SeleniumExampleTests extends SeleniumBaseTest {
      * driver.get()    -> opens the URL
      * getTitle()      -> returns the page <title> tag text
      */
+    @Story("User logs in successfully")
     @Test(description = "Verify page title of example.com")
     public void testPageTitle() {
         logInfo("Navigating to https://example.com");

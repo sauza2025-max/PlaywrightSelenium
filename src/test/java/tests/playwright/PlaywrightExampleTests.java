@@ -7,7 +7,7 @@ import org.testng.annotations.Test;
 import utils.PlaywrightBaseTest;
 
 import java.util.List;
-
+import io.qameta.allure.*;
 /**
  * PlaywrightExampleTests
  * ======================
@@ -34,6 +34,8 @@ import java.util.List;
  *  | element.sendKeys()      | locator.fill()                           |
  *  +-------------------------+------------------------------------------+
  */
+@Epic("Playwright")
+@Feature("Valid Login")
 public class PlaywrightExampleTests extends PlaywrightBaseTest {
 
     // -- Test 1: Basic Navigation ---------------------------------------------
