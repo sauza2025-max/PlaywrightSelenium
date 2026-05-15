@@ -19,7 +19,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <playwright.version>1.44.0</playwright.version>
-        <selenium.version>4.32.0</selenium.version>
+        <selenium.version>4.44.0</selenium.version>
         <testng.version>7.10.2</testng.version>
         <extentreports.version>5.0.4</extentreports.version>
         <webdrivermanager.version>5.8.0</webdrivermanager.version>
@@ -148,31 +148,6 @@
                         <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
                     </systemPropertyVariables>
                 </configuration>
-            </plugin>
-
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.3.1</version>
-                <executions>
-                    <execution>
-                        <id>copy-allure-environment</id>
-                        <phase>post-integration-test</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/allure-results</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/test/resources</directory>
-                                    <includes>
-                                        <include>environment.properties</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
 
             <!-- JaCoCo Plugin -->

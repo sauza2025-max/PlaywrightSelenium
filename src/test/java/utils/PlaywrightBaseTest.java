@@ -36,6 +36,11 @@ public class PlaywrightBaseTest {
         );
         page = context.newPage();
 
+        // After browser/page is created
+        String version = page.context().browser().version();
+        System.setProperty("browser.version", version);
+        System.out.println(">>> Browser version captured: " + version);
+
         // ✅ Register page so AllureListener can access it
         PageManager.setPage(page);
 

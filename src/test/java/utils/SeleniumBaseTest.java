@@ -5,6 +5,7 @@ import com.aventstack.extentreports.Status;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -41,6 +42,12 @@ public class SeleniumBaseTest {
         // ✅ Store driver in DriverManager so listener can access it
         DriverManager.setDriver(new ChromeDriver(options));
         DriverManager.getDriver().manage().window().maximize();
+
+        // ✅ Store version right after driver creation
+        String version = ((RemoteWebDriver) DriverManager.getDriver())
+                .getCapabilities().getBrowserVersion();
+        System.setProperty("browser.version", version);
+        System.out.println(">>> Browser version captured: " + version);
 
         test = ExtentReportManager.createTest(
                 "[Selenium] " + method.getName(),

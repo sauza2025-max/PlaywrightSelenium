@@ -5,6 +5,7 @@ import io.qameta.allure.Allure;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.ISuiteListener;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
@@ -40,12 +41,13 @@ public class AllureListener implements ITestListener, ISuiteListener {
         try {
             Properties props = new Properties();
             props.setProperty("Browser", "Chrome");
-            props.setProperty("Browser.Version", "120.0");
+            // ✅ Read the stored version, fallback to Unknown if not set
+            props.setProperty("Browser.Version", System.getProperty("browser.version", "Unknown"));
             props.setProperty("Environment", "QA");
             props.setProperty("Base.URL", "https://your-app.com");
             props.setProperty("OS", System.getProperty("os.name"));
 
-            // ✅ Changed to target/allure-results
+                // ✅ Changed to target/allure-results
             File allureResultsDir = new File(System.getProperty("user.dir") + "/target/allure-results");
             if (!allureResultsDir.exists()) allureResultsDir.mkdirs();
 
