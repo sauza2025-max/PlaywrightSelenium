@@ -10,6 +10,10 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
+import org.testng.annotations.AfterSuite;
+import java.io.*;
+import java.util.Properties;
+
 import java.lang.reflect.Method;
 
 public class SeleniumBaseTest {
@@ -54,6 +58,25 @@ public class SeleniumBaseTest {
     public void tearDownClass() {
         ExtentReportManager.flush();
     }
+
+
+        @AfterSuite
+        public void setAllureEnvironment() throws IOException {
+            Properties props = new Properties();
+            props.setProperty("Browser", "Chrome");
+            props.setProperty("Browser.Version", "120.0");
+            props.setProperty("Environment", "QA");
+            props.setProperty("Base.URL", "https://your-app.com");
+            props.setProperty("OS", System.getProperty("os.name"));
+
+            File allureResultsDir = new File("allure-results");
+            if (!allureResultsDir.exists()) allureResultsDir.mkdirs();
+
+            try (FileOutputStream fos = new FileOutputStream(
+                    new File(allureResultsDir, "environment.properties"))) {
+                props.store(fos, "Allure Environment");
+            }
+        }
 
     protected void logInfo(String message) { test.log(Status.INFO, message); }
     protected void logPass(String message) { test.log(Status.PASS, message); }

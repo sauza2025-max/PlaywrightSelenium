@@ -5,14 +5,17 @@ import io.qameta.allure.Allure;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.testng.ISuiteListener;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 import utils.DriverManager;
 import utils.PageManager;
+import org.testng.ISuite;
 
-import java.io.ByteArrayInputStream;
+import java.io.*;
+import java.util.Properties;
 
-public class AllureListener implements ITestListener {
+public class AllureListener implements ITestListener, ISuiteListener {
 
     @Override
     public void onTestSuccess(ITestResult result) {
@@ -30,6 +33,31 @@ public class AllureListener implements ITestListener {
     public void onTestSkipped(ITestResult result) {
         attachScreenshot("Screenshot - SKIPPED - " + result.getName());
         cleanup();
+    }
+
+    @Override
+    public void onFinish(ISuite suite) {
+        try {
+            Properties props = new Properties();
+            props.setProperty("Browser", "Chrome");
+            props.setProperty("Browser.Version", "120.0");
+            props.setProperty("Environment", "QA");
+            props.setProperty("Base.URL", "https://your-app.com");
+            props.setProperty("OS", System.getProperty("os.name"));
+
+            // ✅ Changed to target/allure-results
+            File allureResultsDir = new File(System.getProperty("user.dir") + "/target/allure-results");
+            if (!allureResultsDir.exists()) allureResultsDir.mkdirs();
+
+            File envFile = new File(allureResultsDir, "environment.properties");
+            try (FileOutputStream fos = new FileOutputStream(envFile)) {
+                props.store(fos, "Allure Environment");
+            }
+            System.out.println(">>> Allure env file created: " + envFile.getAbsolutePath());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void attachScreenshot(String name) {
