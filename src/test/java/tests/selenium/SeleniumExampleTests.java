@@ -11,37 +11,18 @@ import utils.SeleniumBaseTest;
 import java.time.Duration;
 import java.util.List;
 import io.qameta.allure.*;
-/**
- * SeleniumExampleTests
- * ====================
- * Learning examples covering the most common Selenium patterns.
- * Uses https://example.com and https://the-internet.herokuapp.com (free test sites).
- *
- * TOPICS COVERED:
- *  1. Basic navigation & title assertion
- *  2. Finding elements by ID, CSS selector, XPath
- *  3. Explicit waits (best practice over Thread.sleep)
- *  4. Interacting with forms (input, button click)
- *  5. Handling multiple elements (lists)
- *  6. Verifying element visibility
- */
+
 @Epic("Selenium")
 @Feature("Valid Login")
 public class SeleniumExampleTests extends SeleniumBaseTest {
 
-    // -- Test 1: Basic Navigation ---------------------------------------------
-    /**
-     * LESSON: Always start with navigating to a URL and checking the title.
-     * driver.get()    -> opens the URL
-     * getTitle()      -> returns the page <title> tag text
-     */
     @Story("User logs in successfully")
     @Test(description = "Verify page title of example.com")
     public void testPageTitle() {
         logInfo("Navigating to https://example.com");
-        driver.get("https://example.com");
+        getDriver().get("https://example.com");
 
-        String title = driver.getTitle();
+        String title = getDriver().getTitle();
         logInfo("Page title is: " + title);
 
         Assert.assertEquals(title, "Example Domain",
@@ -49,19 +30,11 @@ public class SeleniumExampleTests extends SeleniumBaseTest {
         logPass("Title verified: " + title);
     }
 
-    // -- Test 2: Find Element by CSS Selector ---------------------------------
-    /**
-     * LESSON: CSS selectors are the most readable way to locate elements.
-     * By.cssSelector("h1")        -> finds <h1>
-     * By.cssSelector(".class")    -> finds by class
-     * By.cssSelector("#id")       -> finds by ID
-     * element.getText()           -> reads visible text
-     */
     @Test(description = "Find and verify heading text using CSS selector")
     public void testFindElementByCss() {
-        driver.get("https://example.com");
+        getDriver().get("https://example.com");
 
-        WebElement heading = driver.findElement(By.cssSelector("h1"));
+        WebElement heading = getDriver().findElement(By.cssSelector("h1"));
         String headingText = heading.getText();
         logInfo("Found heading: " + headingText);
 
@@ -69,19 +42,11 @@ public class SeleniumExampleTests extends SeleniumBaseTest {
         logPass("Heading text verified [OK]");
     }
 
-    // -- Test 3: Find Element by XPath ----------------------------------------
-    /**
-     * LESSON: XPath is powerful for complex queries.
-     * //tag[@attribute='value']   -> exact attribute match
-     * //tag[contains(text(),'x')] -> partial text match
-     * Use XPath when CSS selectors aren't enough.
-     */
     @Test(description = "Find element using XPath")
     public void testFindElementByXPath() {
-        driver.get("https://example.com");
+        getDriver().get("https://example.com");
 
-        // Find the paragraph containing "illustrative" text
-        WebElement paragraph = driver.findElement(
+        WebElement paragraph = getDriver().findElement(
                 By.xpath("//p[contains(text(),'illustrative')]")
         );
 
@@ -90,26 +55,14 @@ public class SeleniumExampleTests extends SeleniumBaseTest {
         logPass("XPath element found and visible [OK]");
     }
 
-    // -- Test 4: Explicit Wait -------------------------------------------------
-    /**
-     * LESSON: Never use Thread.sleep(). Always use WebDriverWait.
-     * WebDriverWait polls every 500ms until condition is true or timeout.
-     *
-     * Common ExpectedConditions:
-     *   visibilityOfElementLocated   -> element exists AND is visible
-     *   elementToBeClickable         -> element is visible AND enabled
-     *   presenceOfElementLocated     -> element exists in DOM (may be hidden)
-     *   titleContains                -> page title contains string
-     */
     @Test(description = "Use explicit wait to wait for element visibility")
     public void testExplicitWait() {
-        driver.get("https://the-internet.herokuapp.com/dynamic_loading/1");
+        getDriver().get("https://the-internet.herokuapp.com/dynamic_loading/1");
 
         logInfo("Clicking Start button...");
-        driver.findElement(By.cssSelector("#start button")).click();
+        getDriver().findElement(By.cssSelector("#start button")).click();
 
-        // Wait up to 10 seconds for the finish text to appear
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebDriverWait wait = new WebDriverWait(getDriver(), Duration.ofSeconds(10));
         WebElement finishElement = wait.until(
                 ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#finish h4"))
         );
@@ -119,20 +72,13 @@ public class SeleniumExampleTests extends SeleniumBaseTest {
         logPass("Explicit wait worked -- element appeared after dynamic load [OK]");
     }
 
-    // -- Test 5: Form Interaction ----------------------------------------------
-    /**
-     * LESSON: Interacting with form fields.
-     * element.sendKeys("text")  -> types into an input
-     * element.clear()           -> clears existing text first
-     * element.click()           -> clicks buttons, checkboxes, links
-     */
     @Test(description = "Fill in a login form and verify error message")
     public void testFormInteraction() {
-        driver.get("https://the-internet.herokuapp.com/login");
+        getDriver().get("https://the-internet.herokuapp.com/login");
 
-        WebElement usernameField = driver.findElement(By.id("username"));
-        WebElement passwordField = driver.findElement(By.id("password"));
-        WebElement loginButton   = driver.findElement(By.cssSelector("button[type='submit']"));
+        WebElement usernameField = getDriver().findElement(By.id("username"));
+        WebElement passwordField = getDriver().findElement(By.id("password"));
+        WebElement loginButton   = getDriver().findElement(By.cssSelector("button[type='submit']"));
 
         logInfo("Entering wrong credentials...");
         usernameField.clear();
@@ -143,8 +89,7 @@ public class SeleniumExampleTests extends SeleniumBaseTest {
 
         loginButton.click();
 
-        // Verify error message appears
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        WebDriverWait wait = new WebDriverWait(getDriver(), Duration.ofSeconds(5));
         WebElement errorMsg = wait.until(
                 ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#flash.error"))
         );
@@ -155,21 +100,17 @@ public class SeleniumExampleTests extends SeleniumBaseTest {
         logPass("Form interaction and error validation passed [OK]");
     }
 
-    // -- Test 6: Multiple Elements ---------------------------------------------
-    /**
-     * LESSON: findElements() returns a List -- use when you expect many matches.
-     * Useful for tables, lists, dropdowns, repeated components.
-     */
     @Test(description = "Find multiple elements and count them")
     public void testMultipleElements() {
-        driver.get("https://the-internet.herokuapp.com/checkboxes");
+        getDriver().get("https://the-internet.herokuapp.com/checkboxes");
 
-        List<WebElement> checkboxes = driver.findElements(By.cssSelector("input[type='checkbox']"));
+        List<WebElement> checkboxes = getDriver().findElements(
+                By.cssSelector("input[type='checkbox']")
+        );
         logInfo("Found " + checkboxes.size() + " checkboxes on the page");
 
         Assert.assertEquals(checkboxes.size(), 2, "Should find exactly 2 checkboxes");
 
-        // Check state of each
         for (int i = 0; i < checkboxes.size(); i++) {
             logInfo("Checkbox " + (i + 1) + " checked: " + checkboxes.get(i).isSelected());
         }

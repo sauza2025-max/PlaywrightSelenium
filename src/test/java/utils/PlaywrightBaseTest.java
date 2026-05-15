@@ -10,23 +10,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
 import java.lang.reflect.Method;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
-/**
- * PlaywrightBaseTest
- * ------------------
- * Base class for all Playwright tests.
- * Handles: Playwright/Browser/Page lifecycle, Extent reporting, screenshots on failure.
- *
- * Extend this class in your Playwright test classes.
- *
- * KEY DIFFERENCE FROM SELENIUM:
- *   Playwright manages its own browser binaries -- no WebDriverManager needed.
- *   One Playwright instance per class, one Page per test method.
- */
 public class PlaywrightBaseTest {
 
     protected Playwright playwright;
@@ -38,23 +22,22 @@ public class PlaywrightBaseTest {
     @BeforeClass
     public void setUpClass() {
         playwright = Playwright.create();
-
-        // Launch Chromium in headless mode
-        // TIP: Change to playwright.firefox() or playwright.webkit() to test other browsers!
         browser = playwright.chromium().launch(
                 new BrowserType.LaunchOptions()
-                        .setHeadless(true)          // set false for local debugging
-                        .setSlowMo(50)              // slows down actions by 50ms -- great for learning
+                        .setHeadless(true)
+                        .setSlowMo(50)
         );
     }
 
     @BeforeMethod
     public void setUp(Method method) {
-        // Each test gets its own isolated browser context (like a fresh incognito window)
         context = browser.newContext(new Browser.NewContextOptions()
                 .setViewportSize(1920, 1080)
         );
         page = context.newPage();
+
+        // ✅ Register page so AllureListener can access it
+        PageManager.setPage(page);
 
         test = ExtentReportManager.createTest(
                 "[Playwright] " + method.getName(),
@@ -63,7 +46,7 @@ public class PlaywrightBaseTest {
         test.info("Browser started -> Chromium (Playwright)");
     }
 
-    @AfterMethod
+    @AfterMethod(alwaysRun = true)
     public void tearDown(ITestResult result) {
         if (result.getStatus() == ITestResult.FAILURE) {
             test.fail("Test FAILED: " + result.getThrowable().getMessage());
@@ -73,7 +56,8 @@ public class PlaywrightBaseTest {
             test.skip("Test SKIPPED");
         }
 
-        if (context != null) context.close();
+        // ✅ Do NOT close context here — AllureListener needs page alive for screenshot
+        // context.close() moved to listener
         test.info("Browser context closed");
     }
 
@@ -84,17 +68,7 @@ public class PlaywrightBaseTest {
         ExtentReportManager.flush();
     }
 
-    // -- Helpers --------------------------------------------------------------
-
-    protected void logInfo(String message) {
-        test.log(Status.INFO, message);
-    }
-
-    protected void logPass(String message) {
-        test.log(Status.PASS, message);
-    }
-
-    protected void logFail(String message) {
-        test.log(Status.FAIL, message);
-    }
+    protected void logInfo(String message) { test.log(Status.INFO, message); }
+    protected void logPass(String message) { test.log(Status.PASS, message); }
+    protected void logFail(String message) { test.log(Status.FAIL, message); }
 }

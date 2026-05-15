@@ -5,7 +5,7 @@
 
     <listeners>
         <!-- Add a listener here if you want custom TestNG reporting hooks -->
-        <listener class-name="listeners.ScreenshotListener"/>
+        <listener class-name="listeners.AllureListener"/>
     </listeners>
 
     <!-- ==================== SELENIUM TESTS ==================== -->
