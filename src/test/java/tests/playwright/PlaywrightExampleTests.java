@@ -1,6 +1,7 @@
 package tests.playwright;
 
 import com.microsoft.playwright.*;
+import com.microsoft.playwright.options.*;
 import com.microsoft.playwright.options.LoadState;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -54,6 +55,7 @@ public class PlaywrightExampleTests extends PlaywrightBaseTest {
 
         Assert.assertEquals(title, "Example Domain");
         logPass("Title verified [OK]");
+
     }
 
     // -- Test 2: Locators -----------------------------------------------------

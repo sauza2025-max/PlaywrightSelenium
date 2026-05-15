@@ -5,6 +5,7 @@
 
     <listeners>
         <!-- Add a listener here if you want custom TestNG reporting hooks -->
+        <listener class-name="listeners.ScreenshotListener"/>
     </listeners>
 
     <!-- ==================== SELENIUM TESTS ==================== -->
