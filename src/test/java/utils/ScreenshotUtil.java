@@ -7,6 +7,9 @@ import org.openqa.selenium.WebDriver;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -15,18 +18,17 @@ public class ScreenshotUtil {
 
     public static String capture(WebDriver driver, String testName) {
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String fileName = testName + "_" + timestamp + ".png";
         String dir = "target/screenshots/";
 
-        new File(dir).mkdirs();
-
-        File src = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-        String destPath = dir + fileName;
         try {
-            FileUtils.copyFile(src, new File(destPath));
+            Files.createDirectories(Paths.get(dir));
+            File src = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+            Path dest = Paths.get(dir, testName + "_" + timestamp + ".png");
+            Files.copy(src.toPath(), dest);
+            return dest.toAbsolutePath().toString();   // Path, so toAbsolutePath() works
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Could not take screenshot: " + e.getMessage());
+            return null;
         }
-        return destPath; // return path so reporters can embed it
     }
 }

@@ -66,11 +66,7 @@ public class PlaywrightBaseTest {
     @AfterMethod
     public void tearDown(ITestResult result) {
         if (result.getStatus() == ITestResult.FAILURE) {
-            String screenshotPath = takeScreenshot(result.getName());
             test.fail("Test FAILED: " + result.getThrowable().getMessage());
-            if (screenshotPath != null) {
-                test.addScreenCaptureFromPath(screenshotPath, "Failure Screenshot");
-            }
         } else if (result.getStatus() == ITestResult.SUCCESS) {
             test.pass("Test PASSED [OK]");
         } else {
@@ -100,20 +96,5 @@ public class PlaywrightBaseTest {
 
     protected void logFail(String message) {
         test.log(Status.FAIL, message);
-    }
-
-    private String takeScreenshot(String testName) {
-        try {
-            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-            String screenshotsDir = System.getProperty("user.dir") + java.io.File.separator
-                    + "test-output" + java.io.File.separator + "screenshots";
-            Path dest = Paths.get(screenshotsDir, testName + "_" + timestamp + ".png");
-            java.nio.file.Files.createDirectories(dest.getParent());
-            page.screenshot(new Page.ScreenshotOptions().setPath(dest).setFullPage(true));
-            return dest.toString();
-        } catch (Exception e) {
-            System.err.println("Could not take screenshot: " + e.getMessage());
-            return null;
-        }
     }
 }

@@ -17,8 +17,13 @@ import java.lang.reflect.Method;
 
 public class SeleniumBaseTest {
 
-    protected WebDriver driver;
-    protected ExtentTest test;
+    public WebDriver driver;
+    public ExtentTest test;
+
+    // Add to SeleniumBaseTest
+    public WebDriver getDriver() {
+        return driver;
+    }
 
     @BeforeClass
     public void setUpClass() {
@@ -45,31 +50,10 @@ public class SeleniumBaseTest {
 
     @AfterMethod
     public void tearDown(ITestResult result) {
-        // Capture screenshot for every test and store the returned path
-        String screenshotPath = ScreenshotUtil.capture(driver, result.getMethod().getMethodName());
-
         if (result.getStatus() == ITestResult.FAILURE) {
             test.fail("Test FAILED: " + result.getThrowable().getMessage());
-            if (screenshotPath != null) {
-                try {
-                    test.fail("Failure screenshot",
-                            MediaEntityBuilder.createScreenCaptureFromPath(screenshotPath).build());
-                } catch (Exception e) {
-                    test.fail("Could not attach screenshot: " + e.getMessage());
-                }
-            }
-
         } else if (result.getStatus() == ITestResult.SUCCESS) {
             test.pass("Test PASSED [OK]");
-            if (screenshotPath != null) {
-                try {
-                    test.pass("Pass screenshot",
-                            MediaEntityBuilder.createScreenCaptureFromPath(screenshotPath).build());
-                } catch (Exception e) {
-                    test.warning("Could not attach screenshot: " + e.getMessage());
-                }
-            }
-
         } else {
             test.skip("Test SKIPPED");
         }
